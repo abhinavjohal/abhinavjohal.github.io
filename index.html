@@ -261,9 +261,12 @@
 
 </div>
 
+<!-- SEARCH -->
+<input type="text" id="search" placeholder="🔍 Search entries...">
+
 <!-- TABLE -->
-<div class="card" style="width: 100%; margin-top:20px;">
-  <h3>Recent Entries</h3>
+<div class="card" style="margin-top:20px;">
+  <h3>📋 Recent Entries</h3>
 
   <table id="table">
     <thead>
@@ -279,31 +282,91 @@
   </table>
 </div>
 
+<!-- CHART -->
+<div class="card" style="margin-top:20px;">
+  <h3>📊 Most Common Issues</h3>
+  <canvas id="issueChart"></canvas>
+</div>
+
+</div>
+
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxDGGGB5fDoHIfoOAjPV_tBGoirIdgjDJnHRniYvy9rEQwyvDNYErf8gWEzqCmiEFf8CQ/exec"; // 🔴 replace this
+const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE";
 
+let fullData = [];
+let chart;
+
+// LOAD DATA
 async function loadData() {
   const res = await fetch(API_URL);
   const data = await res.json();
 
-  document.getElementById("count").innerText = data.length - 1;
+  fullData = data.slice(1);
 
+  document.getElementById("count").innerText = fullData.length;
+
+  renderTable(fullData);
+  renderChart(fullData);
+}
+
+// TABLE
+function renderTable(data) {
   const table = document.querySelector("#table tbody");
   table.innerHTML = "";
 
-  data.slice(1).reverse().slice(0,5).forEach(row => {
-    const tr = `<tr>
-      <td>${row[0]} ${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-    </tr>`;
-    table.innerHTML += tr;
+  data.slice().reverse().slice(0,10).forEach(row => {
+    table.innerHTML += `
+      <tr>
+        <td>${row[0]} ${row[1]}</td>
+        <td>${row[2]}</td>
+        <td>${row[3]}</td>
+        <td>${row[4]}</td>
+        <td>${row[5]}</td>
+      </tr>`;
   });
 }
 
+// CHART
+function renderChart(data) {
+  const countMap = {};
+
+  data.forEach(row => {
+    const issue = row[5];
+    countMap[issue] = (countMap[issue] || 0) + 1;
+  });
+
+  const labels = Object.keys(countMap);
+  const values = Object.values(countMap);
+
+  const ctx = document.getElementById("issueChart").getContext("2d");
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Issue Frequency',
+        data: values
+      }]
+    }
+  });
+}
+
+// SEARCH
+document.getElementById("search").addEventListener("input", (e) => {
+  const value = e.target.value.toLowerCase();
+
+  const filtered = fullData.filter(row =>
+    row.join(" ").toLowerCase().includes(value)
+  );
+
+  renderTable(filtered);
+});
+
+// FORM
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -322,7 +385,12 @@ document.getElementById("form").addEventListener("submit", async (e) => {
     body: JSON.stringify(payload)
   });
 
-  alert("✅ Entry Submitted!");
+  document.getElementById("successMsg").style.display = "block";
+
+  setTimeout(() => {
+    document.getElementById("successMsg").style.display = "none";
+  }, 2000);
+
   e.target.reset();
   loadData();
 });
