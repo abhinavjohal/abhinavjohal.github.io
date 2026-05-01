@@ -5,16 +5,22 @@
 
   <style>
     body {
-      font-family: Arial;
-      background: #f4f6f9;
-      padding: 20px;
-    }
-
-    h1 {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: #333;
     }
 
+    h1 {
+      color: white;
+      margin-bottom: 20px;
+    }
+
     .container {
+      padding: 20px;
+    }
+
+    .grid {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
@@ -23,40 +29,63 @@
     .card {
       background: white;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       width: 350px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
     }
 
     input, select {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 5px rgba(102,126,234,0.5);
     }
 
     button {
-      background: #007bff;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      padding: 10px;
+      padding: 12px;
       width: 100%;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
     }
 
     button:hover {
-      background: #0056b3;
+      opacity: 0.9;
+      transform: scale(1.02);
     }
 
     .stats {
-      font-size: 18px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
     }
 
     table {
-      border-collapse: collapse;
       width: 100%;
+      border-collapse: collapse;
       margin-top: 10px;
       background: white;
       border-radius: 10px;
@@ -64,14 +93,17 @@
     }
 
     th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
+      padding: 12px;
       text-align: left;
     }
 
     th {
-      background: #007bff;
+      background: #667eea;
       color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
     }
 
   </style>
@@ -79,9 +111,11 @@
 
 <body>
 
-<h1>ECIL-Rapiscan Dashboard</h1>
-
 <div class="container">
+
+<h1>🚀 ECIL-Rapiscan Smart Dashboard</h1>
+
+<div class="grid">
 
   <!-- STATS -->
   <div class="card">
