@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ECIL-Rapiscan Logger</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, select, button { margin: 8px 0; padding: 8px; width: 250px; }
+  </style>
+</head>
+
+<body>
+
+<h2>ECIL-Rapiscan Data Logger</h2>
+
+<h3>Total Entries: <span id="count">Loading...</span></h3>
+
+<form id="form">
+  <select name="intern" required>
+    <option value="">Select Intern</option>
+    <option>Abhinav</option>
+    <option>Priyanshu</option>
+    <option>Harsh</option>
+  </select><br>
+
+  <input name="location" placeholder="Location (NDLS, Metro, DHL)" required><br>
+
+  <select name="machine" required>
+    <option value="">Select Machine</option>
+    <option>632DV-CARGO</option>
+    <option>R-620</option>
+    <option>R-620 XR</option>
+    <option>R-515</option>
+    <option>R-622 XR</option>
+    <option>R-627 XR</option>
+  </select><br>
+
+  <input name="problem" placeholder="Problem" required><br>
+
+  <input name="solution" placeholder="Solution" required><br>
+
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxDGGGB5fDoHIfoOAjPV_tBGoirIdgjDJnHRniYvy9rEQwyvDNYErf8gWEzqCmiEFf8CQ/exec";
+
+async function loadCount() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+  document.getElementById("count").innerText = data.length - 1;
+}
+
+document.getElementById("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  const payload = {
+    intern: formData.get("intern"),
+    location: formData.get("location"),
+    machine: formData.get("machine"),
+    problem: formData.get("problem"),
+    solution: formData.get("solution")
+  };
+
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+
+  alert("Data submitted!");
+  e.target.reset();
+  loadCount();
+});
+
+loadCount();
+</script>
+
+</body>
+</html>
