@@ -1,53 +1,175 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ECIL-Rapiscan Logger</title>
+  <title>ECIL-Rapiscan Dashboard</title>
+
   <style>
-    body { font-family: Arial; padding: 20px; }
-    input, select, button { margin: 8px 0; padding: 8px; width: 250px; }
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .stats {
+      font-size: 18px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #007bff;
+      color: white;
+    }
+
   </style>
 </head>
 
 <body>
 
-<h2>ECIL-Rapiscan Data Logger</h2>
+<h1>ECIL-Rapiscan Dashboard</h1>
 
-<h3>Total Entries: <span id="count">Loading...</span></h3>
+<div class="container">
 
-<form id="form">
-  <select name="intern" required>
-    <option value="">Select Intern</option>
-    <option>Abhinav</option>
-    <option>Priyanshu</option>
-    <option>Harsh</option>
-  </select><br>
+  <!-- STATS -->
+  <div class="card">
+    <div class="stats">
+      Total Entries: <strong id="count">Loading...</strong>
+    </div>
+  </div>
 
-  <input name="location" placeholder="Location (NDLS, Metro, DHL)" required><br>
+  <!-- FORM -->
+  <div class="card">
+    <h3>Log New Issue</h3>
 
-  <select name="machine" required>
-    <option value="">Select Machine</option>
-    <option>632DV-CARGO</option>
-    <option>R-620</option>
-    <option>R-620 XR</option>
-    <option>R-515</option>
-    <option>R-622 XR</option>
-    <option>R-627 XR</option>
-  </select><br>
+    <form id="form">
 
-  <input name="problem" placeholder="Problem" required><br>
+      <select name="intern" required>
+        <option value="">Select Intern</option>
+        <option>Abhinav</option>
+        <option>Priyanshu</option>
+        <option>Harsh</option>
+      </select>
 
-  <input name="solution" placeholder="Solution" required><br>
+      <select name="location" required>
+        <option value="">Select Location</option>
+        <option>NDLS</option>
+        <option>Metro</option>
+        <option>DHL Warehouse</option>
+      </select>
 
-  <button type="submit">Submit</button>
-</form>
+      <select name="machine" required>
+        <option value="">Select Machine</option>
+        <option>632DV-CARGO</option>
+        <option>R-620</option>
+        <option>R-620 XR</option>
+        <option>R-515</option>
+        <option>R-622 XR</option>
+        <option>R-627 XR</option>
+      </select>
+
+      <input name="problem" placeholder="Problem" required>
+      <input name="solution" placeholder="Solution" required>
+
+      <button type="submit">Submit Entry</button>
+    </form>
+  </div>
+
+</div>
+
+<!-- TABLE -->
+<div class="card" style="width: 100%; margin-top:20px;">
+  <h3>Recent Entries</h3>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th>Date & Time</th>
+        <th>Intern</th>
+        <th>Location</th>
+        <th>Machine</th>
+        <th>Problem</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxDGGGB5fDoHIfoOAjPV_tBGoirIdgjDJnHRniYvy9rEQwyvDNYErf8gWEzqCmiEFf8CQ/exec";
 
-async function loadCount() {
+const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE"; // 🔴 replace this
+
+async function loadData() {
   const res = await fetch(API_URL);
   const data = await res.json();
+
   document.getElementById("count").innerText = data.length - 1;
+
+  const table = document.querySelector("#table tbody");
+  table.innerHTML = "";
+
+  data.slice(1).reverse().slice(0,5).forEach(row => {
+    const tr = `<tr>
+      <td>${row[0]} ${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+    </tr>`;
+    table.innerHTML += tr;
+  });
 }
 
 document.getElementById("form").addEventListener("submit", async (e) => {
@@ -68,12 +190,13 @@ document.getElementById("form").addEventListener("submit", async (e) => {
     body: JSON.stringify(payload)
   });
 
-  alert("Data submitted!");
+  alert("✅ Entry Submitted!");
   e.target.reset();
-  loadCount();
+  loadData();
 });
 
-loadCount();
+loadData();
+
 </script>
 
 </body>
